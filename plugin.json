@@ -1,0 +1,8 @@
+{
+  "name"              :"ExternalAuthExample",
+  "description"       :"Example Plugin to demonstrate how to log in a web shop user via an external OAuth2-provider",
+  "namespace"         :"ExternalAuthExample",
+  "author"            :"plentymarkets GmbH",
+  "type"              :"template",
+  "serviceProvider"   :"ExternalAuthExample\\Providers\\ExternalAuthExampleServiceProvider"
+}

@@ -10,6 +10,10 @@ class ExternalAuthExampleRouteServiceProvider extends RouteServiceProvider
     public function map(Router $router)
     {
         $router->get('login', 'ExternalAuthExample\Controllers\ContentController@showLoginPage');
-        $router->post('tokensignin', 'ExternalAuthExample\Controllers\AuthController@signInWithToken');
+        $router->post('token_signin', 'ExternalAuthExample\Controllers\AuthController@signInWithToken');
+        $router->post('credentials_signin', 'ExternalAuthExample\Controllers\AuthController@signInWithCredentials');
+        $router->post('connect_google', 'ExternalAuthExample\Controllers\AuthController@connectGoogleAccount');
+        $router->post('logout', 'ExternalAuthExample\Controllers\AuthController@logout');
+        $router->get('home', 'ExternalAuthExample\Controllers\ContentController@showUserHomePage');
     }
 }

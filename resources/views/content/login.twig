@@ -1,30 +1,58 @@
-<!doctype html>
+{% extends 'ExternalAuthExample::layout' %}
+{% block content %}
+    <div class="columns">
+        <div class="column">
+            <div class="container is-fluid">
+                <h4 class="title is-4">Login with your email & password</h4>
+                <form action="/credentials_signin" method="post">
+                    <div class="field">
+                        <label class="label">Email</label>
+                        <div class="control">
+                            <input class="input" type="email" name="email" placeholder="johndoe@example.com">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Password</label>
+                        <div class="control">
+                            <input class="input" type="password" name="password">
+                        </div>
+                    </div>
+                    <div class="control">
+                        <input type="submit" class="button is-primary" value="Submit">
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="column">
+            <div class="container is-fluid">
+                <h4 class="title is-4">Or login using Google</h4>
+                <br><br>
+                <div class="g-signin2" data-onsuccess="onGoogleSignInSuccess"></div><br>
+                <button class="button is-primary" onclick="login()">Log in with Google!</button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
 
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-
-    <title>Login with Google</title>
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <meta name="google-signin-client_id"
-          content="44556083146-d5lct3tomg55ja6tj68rtukqsmel5503.apps.googleusercontent.com">
-
-</head>
-
-<body>
-<div class="g-signin2" data-onsuccess="onSignIn"></div>
-<a href="#" onclick="signOut();">Sign out</a>
-
+{% block scripts %}
 <script>
-    function onSignIn(googleUser) {
-        var id_token = googleUser.getAuthResponse().id_token;
+    var google_id_token = null;
+    function onGoogleSignInSuccess(googleUser) {
+        google_id_token = googleUser.getAuthResponse().id_token;
+    }
+
+    function login() {
+        if (google_id_token === null) {
+            alert('Please log in to google first.');
+            return;
+        }
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/tokensignin');
+        xhr.open('POST', '/token_signin');
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xhr.onload = function() {
-            console.log('Signed in as: ' + xhr.responseText);
+        xhr.onload = function () {
+            location.href = '/home';
         };
-        xhr.send('idtoken=' + id_token);
+        xhr.send('idtoken=' + google_id_token);
     }
 
     function signOut() {
@@ -34,5 +62,4 @@
         });
     }
 </script>
-</body>
-</html>
+{% endblock %}

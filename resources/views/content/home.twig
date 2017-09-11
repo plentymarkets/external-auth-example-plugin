@@ -1,0 +1,39 @@
+{% extends 'ExternalAuthExample::layout' %}
+{% block content %}
+<h4 class="title is-4">Logged in as {{ user.email }}</h4>
+    <p>Google account is</p>
+    {% if googleConnection %}
+        <p class="has-text-success"><span class="icon"><i class="fa fa-check"></i></span> Connected!</p>
+    {% else %}
+        <p class="has-text-danger"><span class="icon"><i class="fa fa-times"></i></span> Not connected!</p><br>
+        <p>Click here to log in to Google and connect your accounts:</p>
+        <div class="g-signin2" data-onsuccess="onGoogleSigninSuccess"></div>
+        <button onclick="connect()">Connect!</button>
+    {%  endif %}
+<form action="/logout" method="post" style="padding-top:50px;">
+    <input type="submit" class="button is-warning" value="Logout">
+</form>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        var google_id_token = null; // Feel free to do this much more elegantly ;)
+
+        function onGoogleSigninSuccess(googleUser) {
+            google_id_token = googleUser.getAuthResponse().id_token;
+        }
+
+        function connect() {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/connect_google');
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+            xhr.onload = function () {
+                console.log('Signed in as: ' + xhr.responseText);
+                location.reload(); // Reload the page, so it will now show "connected". Do whatever you want here.
+            };
+
+            xhr.send('idtoken=' + google_id_token);
+        }
+    </script>
+{% endblock %}

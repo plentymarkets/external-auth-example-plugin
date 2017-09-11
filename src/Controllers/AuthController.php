@@ -19,8 +19,22 @@ use Plenty\Plugin\Http\Response;
  */
 class AuthController extends Controller
 {
+    /**
+     * This is an endpoint provided by Google to check token authenticity. Due to the additional
+     * request being made, it is not recommended to use this method in a production environment.
+     * Refer to Google's docs for other methods to check token authenticity.
+     */
     const GOOGLE_TOKENINFO_ENDPOINT = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=';
 
+    /**
+     * Sign in a user using email and password.
+     *
+     * @param Request                                 $request
+     * @param ContactAuthenticationRepositoryContract $contactAuth
+     * @param Response                                $response
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function signInWithCredentials(
         Request $request,
         ContactAuthenticationRepositoryContract $contactAuth,
@@ -33,10 +47,17 @@ class AuthController extends Controller
 
     }
 
-    public function signInWithToken(
+    /**
+     * Sign the user in using a Google token
+     *
+     * @param Request             $request
+     * @param ExternalAuthService $exAuthService
+     *
+     * @return mixed
+     */
+    public function signInWithGoogleToken(
         Request $request,
-        ExternalAuthService $exAuthService,
-        Response $response
+        ExternalAuthService $exAuthService
     ) {
         $id_token = $request->input('idtoken');
 
@@ -45,11 +66,19 @@ class AuthController extends Controller
         return $exAuthService->logInWithExternalUserId($externalUserData['sub'], 'Google');
     }
 
+    /**
+     * Connects the account of the currently logged-in Contact to a Google account. Creates a new ExternalAccess record in the database.
+     *
+     * @param Request                          $request
+     * @param ExternalAccessRepositoryContract $eaRepo
+     * @param AccountService                   $accountService
+     *
+     * @return \Plenty\Plugin\ExternalAuth\Models\ExternalAccess
+     */
     public function connectGoogleAccount(
         Request $request,
         ExternalAccessRepositoryContract $eaRepo,
-        AccountService $accountService,
-        Response $response
+        AccountService $accountService
     ) {
         $id_token = $request->input('idtoken');
 
@@ -65,6 +94,14 @@ class AuthController extends Controller
         return $ea;
     }
 
+    /**
+     * Log out the currently logged-in contact
+     *
+     * @param Response                                $response
+     * @param ContactAuthenticationRepositoryContract $contactAuth
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function logout(Response $response, ContactAuthenticationRepositoryContract $contactAuth)
     {
         $contactAuth->logout();
@@ -72,6 +109,13 @@ class AuthController extends Controller
         return $response->redirectTo('/login');
     }
 
+    /**
+     * Use the provided Google-Endpoint to check (and decode) a Google ID-token.
+     *
+     * @param $token
+     *
+     * @return mixed
+     */
     protected function checkToken($token)
     {
         $curl = curl_init(self::GOOGLE_TOKENINFO_ENDPOINT . urlencode($token));

@@ -1,0 +1,8 @@
+[
+  {
+    "key" : "google.client_id",
+    "label" : "Google Client-ID",
+    "type" : "text",
+    "default" : ""
+  }
+]

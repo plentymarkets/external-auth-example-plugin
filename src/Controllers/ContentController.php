@@ -11,6 +11,15 @@ use Plenty\Modules\Frontend\Services\AccountService;
 
 class ContentController extends Controller
 {
+    /**
+     * Show the page with the login form
+     *
+     * @param Twig                      $twig
+     * @param AccountService            $accountService
+     * @param ContactRepositoryContract $contactRepo
+     *
+     * @return string
+     */
     public function showLoginPage(Twig $twig, AccountService $accountService, ContactRepositoryContract $contactRepo)
     {
         $user = null;
@@ -25,6 +34,17 @@ class ContentController extends Controller
         ]);
     }
 
+    /**
+     * Show the user homepage
+     *
+     * @param Twig                             $twig
+     * @param AccountService                   $accountService
+     * @param ContactRepositoryContract        $contactRepo
+     * @param ExternalAccessRepositoryContract $eaRepo
+     * @param Response                         $response
+     *
+     * @return string|\Symfony\Component\HttpFoundation\Response
+     */
     public function showUserHomepage(
         Twig $twig,
         AccountService $accountService,
